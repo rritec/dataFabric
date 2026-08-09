@@ -148,7 +148,7 @@ def null_check(df: DataFrame, label: str = "DataFrame") -> dict:
         n = df.select(
             F.sum(F.when(F.col(c).isNull(), 1).otherwise(0))
         ).collect()[0][0]
-        nulls[c] = int(n)
+        nulls[c] = int(n) if n is not None else 0
     total = sum(nulls.values())
     return {
         "label"      : label,
@@ -226,7 +226,8 @@ def numeric_reconciliation(source_df: DataFrame,
         col_passed = (
             s["sum"] == t["sum"] and
             s["min"] == t["min"] and
-            s["max"] == t["max"]
+            s["max"] == t["max"] and
+            s["avg"] == t["avg"]
         )
         if not col_passed:
             all_passed = False
